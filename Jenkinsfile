@@ -1,23 +1,28 @@
 pipeline {
-    agent any
-    stages {
-        stage('Build') {
-            steps {
-                echo 'Démarrage du build...'
-            }
-        }
-        stage('Test') {
-            steps {
-                echo 'Démarrage des tests...'
-                powershell '''
-                if (Test-Path "index.html") {
-                    Write-Output "Fichier index.html présent"
-                } else {
-                    Write-Error "Fichier index.html manquant"
-                    exit 1
-                }
-                '''
-            }
-        }
+  agent any
+
+  stages {
+    stage('Build') {
+      steps {
+        echo 'Démarrage du build...'
+      }
     }
+    stage('Test') {
+      steps {
+        script {
+          echo 'Démarrage des tests...'
+          if (fileExists('index.html')) {
+            echo "Fichier index.html présent"
+          } else {
+            error "Fichier index.html manquant"
+          }
+        }
+      }
+    }
+  }
+
+  post {
+    success { echo 'OK ✅' }
+    failure { echo 'Échec ❌' }
+  }
 }
