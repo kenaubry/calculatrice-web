@@ -9,14 +9,13 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Démarrage des tests...'
-                // Vérifier que le fichier index.html existe
-                bat '''
-                if exist index.html (
-                    echo "Fichier index.html présent"
-                ) else (
-                    echo "Fichier index.html manquant"
-                    exit /b 1
-                )
+                powershell '''
+                if (Test-Path "index.html") {
+                    Write-Output "Fichier index.html présent"
+                } else {
+                    Write-Error "Fichier index.html manquant"
+                    exit 1
+                }
                 '''
             }
         }
